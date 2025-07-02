@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Turbo Stars Lookup</title>
+    <script src="https://cdn.jsdelivr.net/npm/@textsdk/sdk@1.0.0/dist/text-sdk.min.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 10px; }
+      a.button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 15px;
+        background-color: #0052cc;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">Загрузка...</div>
+
+    <script>
+      const client = new TextSDK.Client();
+
+      client.on('ready', async () => {
+        try {
+          const { 'ticket.requester.email': email } = await client.get('ticket.requester.email');
+
+          if (!email) {
+            document.getElementById('app').textContent = "Email не найден в тикете";
+            return;
+          }
+
+          const searchUrl = `https://manager.menaceking.com/players?email=${encodeURIComponent(email)}`;
+
+          document.getElementById('app').innerHTML = `
+            <p><strong>Email пользователя:</strong><br>${email}</p>
+            <a class="button" href="${searchUrl}" target="_blank" rel="noopener noreferrer">
+              🔍 Открыть пользователя в Turbo Stars
+            </a>
+          `;
+        } catch (e) {
+          document.getElementById('app').textContent = "Ошибка при получении данных: " + e.message;
+        }
+      });
+    </script>
+  </body>
+</html>
